@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from pymongo import MongoClient
 from request_word import get_url
 from key_words import find_keys
@@ -20,7 +20,15 @@ def send_values():
     theme = form["theme"]
     article = form["article"]
     material_type = form["material_type"]
-    print(user_type, theme, article, material_type)
+
+    urls = get_url(theme)
+    urls_to_find = find_keys(article)
+    for url in urls_to_find:
+        urls += get_url(url)
+
+    for url in urls:
+        url = url.split("/")[2].replace("www.", "")
+        print(url)
     return "Hello"
 
 
