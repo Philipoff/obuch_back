@@ -1,9 +1,12 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
-import pymorphy2
-import re
-from rutermextract import TermExtractor
+# -*- coding: utf-8 -*-
 
-with open('stop_ru.txt', 'r', encoding="u8") as stop_file:
+import re
+
+import pymorphy2
+from rutermextract import TermExtractor
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+with open("C:\Projects\obuch_back\stop_ru.txt", 'r', encoding="u8") as stop_file:
     rus_stops = [word.strip() for word in stop_file.readlines()]  # запишем стослова в список
 
 make_tf_idf = TfidfVectorizer(stop_words=rus_stops)  # Создаем специальный объект-векторайзер

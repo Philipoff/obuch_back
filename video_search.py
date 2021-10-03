@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from selenium import webdriver
 from getVideoUrl import getVideoUrl
 from bs4 import BeautifulSoup

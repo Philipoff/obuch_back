@@ -1,17 +1,21 @@
-import json
-import wikipedia
-import urllib.request
+# -*- coding: utf-8 -*-
 
+import json
+import random
+
+import wikipedia
 from bson import json_util
 from bson.objectid import ObjectId
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 
-from key_words import find_keys
 from get_info import get_info
-from request_word import get_url
+from image_search import image_search
+from key_words import find_keys
 from most_populat_search import most_popular_search
+from request_word import get_url
+from video_search import video_search
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -38,6 +42,9 @@ collection_blocked_sites = client[db_name]["blocked_sites"]
 #          "pic": "url картинки"}]
 # })
 
+@app.get("/")
+def index():
+    return "Obuchalochka API are working!"
 
 @app.route("/getsearchresults", methods=["GET", "POST"])
 def getsearchresults():
@@ -47,19 +54,20 @@ def getsearchresults():
     subject = form["subject"]
     article = form["article"]
     material_type = form["material_type"]
+    wiki = {}
     try:
         wikipedia.page(theme.title())
-        return {
+        wiki = {
             "title": wikipedia.search(theme)[0],
             "type": "wiki",
             "text": wikipedia.summary(theme.title())
         }
-    except wikipedia.exceptions.PageError as e:
+    except Exception as e:
         print("Не нашлось, да и ничего страшного")
 
     theme_item = collection_themes.find_one({"theme": theme.lower()})
     if theme_item:
-        collection_themes.update_one({"theme": theme.lower()}, {"$inc": {"count": +1}})
+        collection_themes.update_one({"theme": theme.lower().strip()}, {"$inc": {"count": +1}})
     else:
         collection_themes.insert_one({
             "theme": theme.lower(),
@@ -91,20 +99,57 @@ def getsearchresults():
             is_blocked.append(1)
         else:
             is_blocked.append(0)
-    urls = list(map(get_info, urls))
+
+    old_urls = urls[:]
+    urls = []
+    for u in old_urls:
+        try:
+            info = get_info(u)
+            if info != {} and not (info is None):
+                urls.append(info)
+        except Exception as e:
+            pass
+
     for i in range(len(urls)):
         urls[i]["rating"] = rating[i]
         urls[i]["is_blocked"] = is_blocked[i]
-    if user_type == 1:
-        return jsonify({
-            "urls": urls
-        })
-    else:
-        urls = [url for url in urls if url["rating"] >= -5 and url["is_blocked"] == 0]
-        urls = sorted(urls, reverse=True, key=lambda x: x["rating"])
-        return jsonify({
-            "urls": urls
-        })
+
+    urls = [url for url in urls if url["rating"] >= -5 and url["is_blocked"] == 0]
+
+    if wiki != {}:
+        urls.insert(0, wiki)
+
+    return jsonify({
+        "urls": urls
+    })
+
+
+@app.post("/load_videos")
+def videos():
+    form = request.get_json()
+    theme = form["theme"]
+
+    urls = []
+    videos = video_search(theme)
+
+    for v in videos:
+        urls.append({"type": "video", "link": v})
+
+    return jsonify(urls)
+
+
+@app.post("/load_photos")
+def videos_get():
+    form = request.get_json()
+    theme = form["theme"]
+
+    urls = []
+    images = image_search(theme)
+
+    for i in images:
+        urls.append(i)
+
+    return jsonify(urls)
 
 
 @app.post("/rate_site")
@@ -140,4 +185,9 @@ def get_compilation(id):
     return json.loads(json_util.dumps(collection))
 
 
-app.run(debug=True)
+@app.get("/get_popular/<subj>")
+def get_popular(subj):
+    return most_popular_search(collection_themes, subj, count=10)
+
+
+app.run(port=5009)

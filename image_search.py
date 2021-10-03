@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from selenium import webdriver
 from getImgUrl import getImgUrl
 from bs4 import BeautifulSoup
@@ -6,7 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 
 
-def image_search(query, count=5):
+def image_search(query, count=10):
     options = webdriver.ChromeOptions()
     chrome_options = Options()
     chrome_options.add_argument("--headless")
@@ -24,7 +26,7 @@ def image_search(query, count=5):
             elems[i].click()
             additional_driver.get(elems[i].get_attribute('href'))
             soup = BeautifulSoup(additional_driver.page_source, "lxml")
-            res.append(soup.find('img', class_="n3VNCb")["src"])
+            res.append({"link": soup.find('img', class_="n3VNCb")["src"], "type": "image"})
         except:
             pass
 

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 def getVideoUrl(query):
     query= query.split()
     query='+'.join(query)

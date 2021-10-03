@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 def getImgUrl(query):
     query= query.split()
     query='+'.join(query)
