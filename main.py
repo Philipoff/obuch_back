@@ -11,6 +11,7 @@ from pymongo import MongoClient
 from key_words import find_keys
 from get_info import get_info
 from request_word import get_url
+from most_populat_search import most_popular_search
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -43,6 +44,7 @@ def getsearchresults():
     form = request.get_json()
     user_type = form["user_type"]
     theme = form["theme"]
+    subject = form["subject"]
     article = form["article"]
     material_type = form["material_type"]
     try:
@@ -61,6 +63,7 @@ def getsearchresults():
     else:
         collection_themes.insert_one({
             "theme": theme.lower(),
+            "subject": subject.lower(),
             "count": 1
         })
 
