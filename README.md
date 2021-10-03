@@ -55,8 +55,8 @@ HTTP-сервер при этом должен быть настроен на п
 # РАЗРАБОТЧИКИ  
 ### И наши юзернеймы в Telegram  
 
-Самойлов Илья - Fullstack @siailya
-Захаров Филип - Backend @Pholeg
-Козлов Тимофей - Backend @zerodaayy
-Шиняева Анастасия - Design @adoomaxas
+Самойлов Илья - Fullstack @siailya  
+Захаров Филип - Backend @Pholeg  
+Козлов Тимофей - Backend @zerodaayy  
+Шиняева Анастасия - Design @adoomaxas  
 Чернов Тимофей - Analytics @tubeornot
