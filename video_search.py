@@ -28,5 +28,3 @@ def video_search(query, count=5):
     main_driver.quit()
 
     return res
-
-#print(video_search("Котики"))

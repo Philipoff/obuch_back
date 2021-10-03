@@ -32,6 +32,3 @@ def image_search(query, count=5):
     additional_driver.quit()
 
     return res
-
-
-#print(image_search("котики"))
