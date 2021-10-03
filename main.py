@@ -7,6 +7,7 @@ from bson.objectid import ObjectId
 
 from request_word import get_url
 from key_words import find_keys
+from get_info import get_info
 
 app = Flask(__name__)
 
@@ -54,6 +55,7 @@ def getsearchresults():
         urls += get_url(url)
 
     urls = list(set(urls))
+
     rating = []
     is_blocked = []
     for url in urls:
@@ -71,15 +73,17 @@ def getsearchresults():
             is_blocked.append(1)
         else:
             is_blocked.append(0)
+    urls = list(map(get_info, urls))
     for i in range(len(urls)):
-        urls[i] = [urls[i], rating[i], is_blocked[i]]
+        urls[i]["rating"] = rating[i]
+        urls[i]["is_blocked"] = is_blocked[i]
     if user_type == 1:
         return jsonify({
             "urls": urls
         })
     else:
-        urls = [url for url in urls if url[1] >= -5 and url[2] == 0]
-        urls = sorted(urls, reverse=True, key=lambda x: x[1])
+        urls = [url for url in urls if url["rating"] >= -5 and url["is_blocked"] == 0]
+        urls = sorted(urls, reverse=True, key=lambda x: x["rating"])
         return jsonify({
             "urls": urls
         })
