@@ -55,16 +55,16 @@ def getsearchresults():
     except wikipedia.exceptions.PageError as e:
         print("Не нашлось, да и ничего страшного")
 
-    theme_item = collection_themes.find_one({"theme": theme})
+    theme_item = collection_themes.find_one({"theme": theme.lower()})
     if theme_item:
-        collection_themes.update_one({"theme": theme}, {"$inc": {"count": +1}})
+        collection_themes.update_one({"theme": theme.lower()}, {"$inc": {"count": +1}})
     else:
         collection_themes.insert_one({
-            "theme": theme,
+            "theme": theme.lower(),
             "count": 1
         })
 
-    urls = get_url(theme)
+    urls = get_url(theme.lower())
     urls_to_find = find_keys(article)
     for url in urls_to_find:
         urls += get_url(url)

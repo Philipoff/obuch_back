@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 
 
 def get_info(site):
-
     site_type = "all"
     if ".jpg" in site or ".png" in site:
         site_type = "image"
