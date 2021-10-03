@@ -1,4 +1,6 @@
 import json
+import wikipedia
+import urllib.request
 
 from bson import json_util
 from bson.objectid import ObjectId
@@ -12,6 +14,7 @@ from request_word import get_url
 
 app = Flask(__name__)
 cors = CORS(app)
+wikipedia.set_lang("ru")
 
 client = MongoClient(
     "mongodb+srv://MindlessDoc:NfhrjdNjg228@cluster0.jlpdf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority&tlsAllowInvalidCertificates=true")
@@ -42,6 +45,15 @@ def getsearchresults():
     theme = form["theme"]
     article = form["article"]
     material_type = form["material_type"]
+    try:
+        wikipedia.page(theme.title())
+        return {
+            "title": wikipedia.search(theme)[0],
+            "type": "wiki",
+            "text": wikipedia.summary(theme.title())
+        }
+    except wikipedia.exceptions.PageError as e:
+        print("Не нашлось, да и ничего страшного")
 
     theme_item = collection_themes.find_one({"theme": theme})
     if theme_item:
