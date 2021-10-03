@@ -1,24 +1,27 @@
 import json
 
 from bson import json_util
-from flask import Flask, request, jsonify
-from pymongo import MongoClient
 from bson.objectid import ObjectId
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from pymongo import MongoClient
 
-from request_word import get_url
 from key_words import find_keys
 from get_info import get_info
+from request_word import get_url
 
 app = Flask(__name__)
+cors = CORS(app)
 
 client = MongoClient(
-    "mongodb+srv://MindlessDoc:NfhrjdNjg228@cluster0.jlpdf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+    "mongodb+srv://MindlessDoc:NfhrjdNjg228@cluster0.jlpdf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority&tlsAllowInvalidCertificates=true")
 
 db_name = "Obuch"
 collection_compilations = client[db_name]["compilations"]
 collection_rating = client[db_name]["rating"]
 collection_themes = client[db_name]["themes"]
 collection_blocked_sites = client[db_name]["blocked_sites"]
+
 
 # collection_compilations.insert_one({
 #     "name": "имя учителя",

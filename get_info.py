@@ -15,7 +15,7 @@ def get_info(site):
     metas = soup.find_all('meta')
 
     description = [meta.attrs['content'] for meta in metas if
-                   'name' in meta.attrs and meta.attrs['name'] == 'description']
+                   'name' in meta.attrs and meta.attrs['name'].lower() == 'description']
     icon_link = soup.find("link", rel="shortcut icon")
 
     info = {
